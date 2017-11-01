@@ -4,61 +4,71 @@
 #include <functional>
 #include <boost/assign/list_of.hpp>
 #include <boost/range/algorithm.hpp>
+#include <boost/algorithm/string/join.hpp>
 #include <math.h>
 
-void display_result(const std::vector<int> vec) {
+/*
+void display_result(const std::vector<std::string> vec) {
     boost::range::copy(vec, std::ostream_iterator<int>(std::cout, " "));
     std::cout << std::endl;
 }
-
+*/
 struct compare {
   bool operator() (int i,int j) {
-    return ((i*10 + j) > (j*10 + 1));
+    std::string ij = std::to_string(i) + std::to_string(j);
+    std::string ji = std::to_string(j) + std::to_string(i);
+    std::cout << "compare = " << ij.compare(ji) << std::endl;
+    return ij.compare(ji);
+  }
+
+  bool operator() (std::string i, std::string j)
+  {
+    std::cout << "i: " << i << "; j: " << j << std::endl;
+    std::string ij = i + j;
+    std::string ji = j + i;
+    std::cout << ij << "," << ji << std::endl;
+    std::cout << ij.compare(ji) << std::endl;
+    return ji.compare(ij);
   }
 } myCompare;
 
-int findLargest(std::vector<int>& vector)
+std::string findLargest(std::vector<std::string>& vector)
 {
   std::sort(vector.begin(), vector.end(), myCompare);
 
-  display_result(vector);
+  std::string result = boost::algorithm::join(vector,"");
 
-  int decimal = pow(10,vector.size()-1);
-  int total = 0;
-  for (auto& it : vector)
-  {
-    std::cout << it << std::endl;
-    std::cout << it * decimal << std::endl;
-    total += it * decimal;
-    std::cout << total << std::endl;
-    decimal /= 10;
-  }
-  return total;
+  return result;
 }
 
 TEST(FindLargest, 21) {
-  std::vector<int> vec {1,2};
-    ASSERT_EQ(21, findLargest(vec));
+  std::vector<std::string> vec {"1","2"};
+    ASSERT_EQ("21", findLargest(vec));
 }
 
-TEST(FindLargest, 10) {
-  std::vector<int> vec {1,0};
-    ASSERT_EQ(10, findLargest(vec));
+TEST(FindLargest, 321) {
+  std::vector<std::string> vec {"1","3","2"};
+    ASSERT_EQ("321", findLargest(vec));
 }
 
 TEST(FindLargest, 0) {
-  std::vector<int> vec {0,0,0,0};
-    ASSERT_EQ(0, findLargest(vec));
+  std::vector<std::string> vec {"0","0","0","0"};
+    ASSERT_EQ("0", findLargest(vec));
 }
 
 TEST(FindLargest, 9710) {
-  std::vector<int> vec {0,1,9,7};
-    ASSERT_EQ(9710, findLargest(vec));
+  std::vector<std::string> vec {"0","1","9","7"};
+    ASSERT_EQ("9710", findLargest(vec));
+}
+
+TEST(FindLargest, 21110) {
+  std::vector<std::string> vec {"11","10","2"};
+    ASSERT_EQ("21110", findLargest(vec));
 }
 
 TEST(FindLargest, 99768211210) {
-  std::vector<int> vec {10, 68, 97, 9, 21, 12};
-    ASSERT_EQ(99768211210, findLargest(vec));
+  std::vector<std::string> vec {"10", "68", "97", "9", "21", "12"};
+    ASSERT_EQ("99768211210", findLargest(vec));
 }
 
 int main(int argc, char **argv) {
