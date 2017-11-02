@@ -8,3 +8,4 @@
 
 [4 - Remove duplicates](problem4.cpp)
 
+[6 - Tag dispatching example](tagDispatching.cpp)
